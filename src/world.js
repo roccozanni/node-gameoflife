@@ -22,31 +22,32 @@ module.exports = function() {
 
     return {
 
-        add: function(x, y) {
+        add: function(c) {
+
+            var x = c.getX(), y = c.getY();
+
             min_x = Math.min(min_x, x);
             min_y = Math.min(min_y, y);
             max_x = Math.max(max_x, x);
             max_y = Math.max(max_y, y);
 
-            var c = new Cell(x, y);
             cells[c.getHash()] = c;
         },
 
-        contains: function(x, y) {
-            return cells[new Cell(x, y).getHash()] !== undefined;
+        contains: function(c) {
+            return cells[c.getHash()] !== undefined;
         },
 
         reset: function() {
             _reset();
         },
 
-        aliveNeighbors: function(x, y) {
-            var c = new Cell(x, y);
+        aliveNeighbors: function(c) {
             var n = c.getNeighbors();
 
             var alive = 0;
             for (var i = 0; i < n.length; i++) {
-                alive += this.contains(n[i].getX(), n[i].getY()) ? 1 : 0;
+                alive += this.contains(n[i], n[i]) ? 1 : 0;
             }
 
             return alive;
@@ -59,11 +60,11 @@ module.exports = function() {
                 for (var y = min_y - 1 ; y <= max_y + 1; y++) {
 
                     var cell        = new Cell(x, y);
-                    var isAlive     = this.contains(cell.getHash());
-                    var neighbors   = this.aliveNeighbors(x, y);
+                    var isAlive     = this.contains(cell);
+                    var neighbors   = this.aliveNeighbors(cell);
 
                     if (neighbors === 3 || (isAlive && neighbors === 2)) {
-                        w.add(x, y);
+                        w.add(cell);
                     }
 
                 }

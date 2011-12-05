@@ -1,64 +1,82 @@
 var assert = require('assert');
 var World  = require('../src/world.js');
+var Cell   = require('../src/cell.js');
 
 suite('World', function() {
 
-    suite('contains', function() {
+    suite('#contains()', function() {
 
-        test('should return if the world contains a live cell at the specified position', function(){
-            
+        test('should return false if the world does not contains the cell', function(){
             var w = new World();
-            assert.ok(!w.contains(0,0), "not contains cell");
 
-            w.add(0,0);
-            assert.ok(w.contains(0,0), "contains cell");
-
+            assert.ok(!w.contains(new Cell(0,0)));
         });
+
+        test('should return true if the world contains the cell', function(){
+            var w = new World();
+            var c = new Cell(0,0);
+            w.add(c);
+
+            assert.ok(w.contains(c));
+        });
+
+        test('should return true if the world contains a cell with the same position', function(){
+            var w = new World();
+            w.add(new Cell(0,0));
+
+            assert.ok(w.contains(new Cell(0,0)), "contains a cell with the same coords");
+        });
+
 
     }),
 
 
-    suite('aliveNeighbors', function(){
+    suite('#aliveNeighbors()', function(){
 
-    	test('should count the number of alive neighbors', function(){
+    	test('should return zero if the world is empty', function(){
     		var w = new World();
-    		assert.equal(w.aliveNeighbors(0,0), 0, "no alive neighbors");
-
-			w.add(10,10);
-    		assert.equal(w.aliveNeighbors(0,0), 0, "no alive neighbors");
-
-    		w.add(-1,-1);
-    		w.add(-1,0);
-    		w.add(-1,1);
-    		w.add(0,-1);
-    		w.add(0,0);
-    		w.add(0,1);
-    		w.add(1,-1);
-    		w.add(1,0);
-    		w.add(1,1);
-
-    		assert.equal(w.aliveNeighbors(0,0), 9, "nine alive neighbors");
-
+            
+    		assert.equal(w.aliveNeighbors(new Cell(0,0)), 0);
     	});
+
+        test('should return zero if the cell has no neighbors', function(){
+            var w = new World();
+            w.add(new Cell(10,10));
+
+            assert.equal(w.aliveNeighbors(new Cell(0,0)), 0, "no alive neighbors");
+        });
+
+        test('should return the correct number of alive neighbors', function(){
+            var w = new World();
+            w.add(new Cell(-1,-1));
+            w.add(new Cell(-1,0));
+            w.add(new Cell(-1,1));
+            w.add(new Cell(0,-1));
+            w.add(new Cell(0,0));
+            w.add(new Cell(0,1));
+            w.add(new Cell(1,-1));
+            w.add(new Cell(1,0));
+            w.add(new Cell(1,1));
+
+            assert.equal(w.aliveNeighbors(new Cell(0,0)), 9, "nine alive neighbors");
+        });
     	
     });
 
-    suite('evolve', function() {
+    suite('#evolve()', function() {
 
-        test('oscillator', function(){
-            
+        test('creates an oscillator pattern', function(){
             var w1 = new World();
-            w1.add(1, 0);
-            w1.add(1, 1);
-            w1.add(1, 2);
+            w1.add(new Cell(1, 0));
+            w1.add(new Cell(1, 1));
+            w1.add(new Cell(1, 2));
 
 			var w2 = new World();
             w1.evolve(w2);
 
-            assert.ok(w2.contains(0, 1), "oscillator 1st cell");
-            assert.ok(w2.contains(1, 1), "oscillator 2nd cell");
-            assert.ok(w2.contains(2, 1), "oscillator 3rd cell");
-
+            assert.ok(w2.contains(new Cell(0, 1)), "oscillator 1st cell");
+            assert.ok(w2.contains(new Cell(1, 1)), "oscillator 2nd cell");
+            assert.ok(w2.contains(new Cell(2, 1)), "oscillator 3rd cell");
         });
 
     });

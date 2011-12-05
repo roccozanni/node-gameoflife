@@ -3,7 +3,7 @@ var Cell   = require('../src/cell.js');
 
 suite('Cell', function() {
 
-    suite('getHash', function() {
+    suite('#getHash()', function() {
 
         test('should return a unique hash based on coordinates', function(){
             
